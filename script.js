@@ -1,45 +1,40 @@
-function completeStage(stage) {
+async function completeStage(stage) {
 
-    const buttons = document.querySelectorAll(
+    const button = document.querySelectorAll(
         ".roadmap-card button"
-    );
-
-    const button = buttons[stage - 1];
+    )[stage - 1];
 
     button.textContent = "✓ Completed";
 
     button.style.background = "#5eead4";
     button.style.color = "#071018";
 
-    localStorage.setItem(
-        "stage" + stage,
-        "completed"
-    );
-}
 
+    try {
 
-window.onload = function () {
+        const response = await fetch(
+            "YOUR_BACKEND_URL/api/progress",
+            {
+                method: "POST",
 
-    const buttons = document.querySelectorAll(
-        ".roadmap-card button"
-    );
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-    for (let i = 1; i <= 6; i++) {
+                body: JSON.stringify({
+                    stageId: stage,
+                    completed: true
+                })
+            }
+        );
 
-        if (
-            localStorage.getItem("stage" + i)
-            === "completed"
-        ) {
+        const data = await response.json();
 
-            buttons[i - 1].textContent =
-                "✓ Completed";
+        console.log(data);
 
-            buttons[i - 1].style.background =
-                "#5eead4";
+    } catch (error) {
 
-            buttons[i - 1].style.color =
-                "#071018";
-        }
+        console.log("Backend connection failed");
+
     }
-
-};
+}
